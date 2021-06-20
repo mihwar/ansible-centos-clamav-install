@@ -1,0 +1,93 @@
+- name: install clamd package
+  yum:
+    name:
+      - clamd
+      - clamav
+      - clamav-data
+      - clamav-update
+#  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: install config for clamd service
+  template:
+    src: "files/clamd.scan.conf.j2"
+    dest: "/etc/clamd.d/scan.conf"
+  register: clamd_config_result
+
+- name: install logrotate clamav-scan config
+  template:
+    src: "files/clamav-scan.logrotate.j2"
+    dest: "/etc/logrotate.d/clamav-scan"
+
+- name: install logrotate clamav-update config
+  template:
+    src: "files/clamav-update.logrotate.j2"
+    dest: "/etc/logrotate.d/clamav-update"
+
+- name: install freshclam config
+  template:
+    src: "files/freshclam.conf.j2"
+    dest: "/etc/freshclam.conf"
+
+- name: add clamav user to clamupdate group
+  user:
+    name: clamav
+    state: present
+    groups:
+      - "clamupdate"
+    append: yes
+
+- name: make clamav user owner of the /etc/clamd.d/scan.conf
+  ansible.builtin.file:
+    path: /etc/clamd.d/scan.conf
+    owner: clamav
+    group: clamav
+    mode: '0644'
+
+- name: make clamav user owner of the /var/run/clamav directory
+  ansible.builtin.file:
+    path: /var/run/clamav
+    owner: clamav
+    group: clamupdate
+    mode: '0770'
+    state: directory
+
+- name: make clamav user owner of log files
+  ansible.builtin.file:
+    path: /var/log/clamav
+    owner: clamav
+    group: virusgroup
+    mode: '0770'
+    state: directory
+
+- name: make clamav:clamupdate user/group owner of the files
+  ansible.builtin.file:
+    path: /etc/freshclam.conf
+    owner: clamupdate
+    group: virusgroup
+    mode: '0640'
+
+- name: make clamupdate user owner of database files in /var/lib/clamav directory
+  ansible.builtin.file:
+    path: /var/lib/clamav
+    owner: clamupdate
+    group: clamupdate
+    mode: '0750'
+    state: directory
+
+- name: restart clamd service if needed
+  systemd:
+    name: "clamd@scan"
+    state: restarted
+  when:
+    - clamd_config_result is changed
+
+- name: enable and start clamd service
+  systemd:
+    name: "clamd@scan"
+    enabled: true
+    state: started
+
+#- name: adding regular clamav databases updates via cron
+
+#- name: adding regular antivirus checks
+

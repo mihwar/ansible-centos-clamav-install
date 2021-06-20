@@ -1,0 +1,38 @@
+#
+# {{ ansible_managed }}
+#
+
+ExcludePath ^/proc/
+ExcludePath ^/sys/
+
+User clamav
+PidFile /var/run/clamav/clamd.pid
+
+LocalSocketMode 660
+LocalSocketGroup clamupdate
+LocalSocket /var/run/clamav/clamd.sock
+FixStaleSocket yes
+
+LogTime yes
+LogFileMaxSize 0
+LogFile /var/log/clamav/clamd.log
+
+TemporaryDirectory /var/tmp
+DatabaseDirectory /var/lib/clamav
+
+MaxConnectionQueueLength 30
+MaxThreads 50
+ReadTimeout 300
+
+ScanPE yes
+ScanELF yes
+ScanOLE2 yes
+ScanMail yes
+ScanArchive yes
+
+ArchiveBlockEncrypted no
+
+AlertBrokenExecutables yes
+AlertEncrypted yes
+AlertEncryptedArchive yes
+AlertEncryptedDoc yes

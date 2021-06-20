@@ -1,0 +1,12 @@
+#
+# {{ ansible_managed }}
+#
+
+DatabaseDirectory /var/lib/clamav
+UpdateLogFile /var/log/clamav/freshclam.log
+DatabaseOwner clamupdate
+DatabaseMirror db.local.clamav.net
+#HTTPProxyServer 192.168.150.51
+#HTTPProxyPort 3128
+TestDatabases yes
+NotifyClamd /etc/clamd.d/scan.conf
