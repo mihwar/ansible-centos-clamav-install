@@ -28,33 +28,25 @@
     src: "files/freshclam.conf.j2"
     dest: "/etc/freshclam.conf"
 
-- name: add clamav user to clamupdate group
-  user:
-    name: clamav
-    state: present
-    groups:
-      - "clamupdate"
-    append: yes
-
 - name: make clamav user owner of the /etc/clamd.d/scan.conf
   ansible.builtin.file:
     path: /etc/clamd.d/scan.conf
-    owner: clamav
-    group: clamav
+    owner: clamscan
+    group: clamscan
     mode: '0644'
 
 - name: make clamav user owner of the /var/run/clamav directory
   ansible.builtin.file:
     path: /var/run/clamav
-    owner: clamav
-    group: clamupdate
+    owner: clamscan
+    group: virusgroup
     mode: '0770'
     state: directory
 
 - name: make clamav user owner of log files
   ansible.builtin.file:
     path: /var/log/clamav
-    owner: clamav
+    owner: clamscan
     group: virusgroup
     mode: '0770'
     state: directory
@@ -70,7 +62,7 @@
   ansible.builtin.file:
     path: /var/lib/clamav
     owner: clamupdate
-    group: clamupdate
+    group: virusgroup # chanched
     mode: '0750'
     state: directory
 
