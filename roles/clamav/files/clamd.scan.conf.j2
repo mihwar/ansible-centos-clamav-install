@@ -9,9 +9,13 @@ User clamscan
 PidFile /var/run/clamav/clamd.pid
 
 LocalSocketMode 660
-LocalSocketGroup clamupdate
+LocalSocketGroup virusgroup
 LocalSocket /var/run/clamav/clamd.sock
 FixStaleSocket yes
+
+# Без этого праметра сервис ругается на
+# clamav Failed to change socket ownership to group clamupdate
+# AllowSupplementaryGroups yes
 
 LogTime yes
 LogFileMaxSize 0
