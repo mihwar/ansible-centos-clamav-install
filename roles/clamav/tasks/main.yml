@@ -79,7 +79,13 @@
     enabled: true
     state: started
 
-#- name: adding regular clamav databases updates via cron
+- name: make regular antivirus checks via cron
+  cron:
+    name: clamscan
+    cron_file: clamscan
+    minute: "10"
+    hour: "5"
+    user: root
+    job: "export LOG=/var/log/clamav/clamav-scan.log && echo -e \"Antivirus scan started `date`\" >> $LOG && ionice -c3 nice -n20 /usr/bin/clamscan -i -r --detect-pua=yes --max-filesize=100M --log=$LOG / --exclude-dir=^/dev/ --exclude-dir=^/proc/ --exclude-dir=^/sys/ && echo \"Antivirus scan finished `date`\" >> $LOG 2>&1"
 
-#- name: adding regular antivirus checks
 
