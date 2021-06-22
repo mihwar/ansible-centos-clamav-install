@@ -13,10 +13,6 @@ LocalSocketGroup virusgroup
 LocalSocket /var/run/clamav/clamd.sock
 FixStaleSocket yes
 
-# Без этого праметра сервис ругается на
-# clamav Failed to change socket ownership to group clamupdate
-# AllowSupplementaryGroups yes
-
 LogTime yes
 LogFileMaxSize 0
 LogFile /var/log/clamav/clamd.log
